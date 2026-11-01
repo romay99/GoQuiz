@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GoQuiz — 기획 문서</title>
+<style>
+  :root {
+    --bg: #ffffff; --fg: #1a1a1a; --muted: #5b6472; --card: #f6f8fa;
+    --border: #e2e6 eb; --border: #e2e6eb; --accent: #2b6cb0; --accent-soft: #e8f1fb;
+    --ok: #1a7f42; --warn: #b7791f; --danger: #c53030; --code-bg: #f0f2f5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f1115; --fg: #e6e9ef; --muted: #9aa3b2; --card: #171a21;
+      --border: #272c36; --accent: #6aa9e9; --accent-soft: #16263a;
+      --ok: #4ade80; --warn: #f0c060; --danger: #f87171; --code-bg: #1b1f27;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #ffffff; --fg: #1a1a1a; --muted: #5b6472; --card: #f6f8fa;
+    --border: #e2e6eb; --accent: #2b6cb0; --accent-soft: #e8f1fb;
+    --ok: #1a7f42; --warn: #b7791f; --danger: #c53030; --code-bg: #f0f2f5;
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f1115; --fg: #e6e9ef; --muted: #9aa3b2; --card: #171a21;
+    --border: #272c36; --accent: #6aa9e9; --accent-soft: #16263a;
+    --ok: #4ade80; --warn: #f0c060; --danger: #f87171; --code-bg: #1b1f27;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--fg);
+    font-family: -apple-system, "Segoe UI", "Malgun Gothic", "Apple SD Gothic Neo", Roboto, sans-serif;
+    line-height: 1.7; font-size: 16px;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 48px 24px 96px; }
+  header.hero {
+    border-bottom: 1px solid var(--border); padding-bottom: 28px; margin-bottom: 40px;
+  }
+  .logo { font-size: 44px; font-weight: 800; letter-spacing: -1px; margin: 0; }
+  .logo .go { color: var(--accent); }
+  .tagline { color: var(--muted); font-size: 18px; margin: 8px 0 0; }
+  .meta { color: var(--muted); font-size: 13px; margin-top: 16px; }
+  h2 {
+    font-size: 24px; margin: 48px 0 16px; padding-bottom: 8px;
+    border-bottom: 2px solid var(--accent); display: inline-block;
+  }
+  h3 { font-size: 18px; margin: 28px 0 10px; }
+  p { margin: 10px 0; }
+  code { background: var(--code-bg); padding: 2px 6px; border-radius: 5px; font-size: 0.88em;
+    font-family: "SF Mono", Consolas, "Courier New", monospace; }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px; overflow-x: auto; font-size: 13px; line-height: 1.55;
+    font-family: "SF Mono", Consolas, "Courier New", monospace; }
+  pre code { background: none; padding: 0; }
+  .tableScroll { overflow-x: auto; margin: 16px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; min-width: 480px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { background: var(--card); font-weight: 700; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 18px 20px; margin: 16px 0; }
+  .callout { border-left: 4px solid var(--accent); background: var(--accent-soft);
+    padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 16px 0; }
+  .callout.warn { border-color: var(--warn); background: color-mix(in srgb, var(--warn) 12%, transparent); }
+  .callout.ok { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 12%, transparent); }
+  .pill { display: inline-block; font-size: 12px; font-weight: 700; padding: 2px 10px;
+    border-radius: 999px; margin-right: 6px; }
+  .pill.easy { background: color-mix(in srgb, var(--ok) 20%, transparent); color: var(--ok); }
+  .pill.mid { background: color-mix(in srgb, var(--warn) 22%, transparent); color: var(--warn); }
+  .pill.hard { background: color-mix(in srgb, var(--danger) 20%, transparent); color: var(--danger); }
+  ul, ol { padding-left: 22px; }
+  li { margin: 6px 0; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin: 16px 0; }
+  .grid .card { margin: 0; }
+  .k { color: var(--muted); font-size: 13px; }
+  .phase { display: flex; gap: 14px; align-items: flex-start; margin: 12px 0; }
+  .phase .num { flex: 0 0 auto; width: 34px; height: 34px; border-radius: 50%;
+    background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 14px; }
+  .phase .body { flex: 1; }
+  .phase .body b { font-size: 15px; }
+  footer { margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--border);
+    color: var(--muted); font-size: 13px; }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <h1 class="logo"><span class="go">Go</span>Quiz</h1>
+    <p class="tagline">매번 새로운 바둑 사활문제를 풀고, 직접 올리고, 함께 난이도를 만들어가는 앱</p>
+    <div class="meta">기획 문서 · 최종 수정 2026-11-01 · 작성 환경 Android(우선) · 상태: 설계 완료 → 세팅 착수</div>
+  </header>
+
+  <section>
+    <h2>1. 제품 개요</h2>
+    <p>lichess의 체스 퍼즐처럼, <b>바둑의 사활(life &amp; death) 문제를 랜덤으로 무한히 풀 수 있는</b> 안드로이드 앱. 사용자가 바둑판 에디터로 직접 문제를 올리고, 서로의 문제를 풀며, 좋다/나쁘다 평가와 시도·정답 통계로 난이도가 자동으로 매겨진다.</p>
+    <div class="grid">
+      <div class="card"><div class="k">플랫폼</div><b>Android (Play Store 우선)</b><br><span class="k">iOS는 추후 검토</span></div>
+      <div class="card"><div class="k">개발 형태</div><b>1인 개발</b><br><span class="k">주니어 · Spring/React 경험</span></div>
+      <div class="card"><div class="k">1차 목표</div><b>MVP 출시</b><br><span class="k">풀이 + 에디터 + 업로드</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>2. 핵심 기능</h2>
+    <div class="tableScroll">
+    <table>
+      <tr><th>기능</th><th>v1.0 (출시 필수)</th><th>v1.x 이후</th></tr>
+      <tr><td>문제 풀이</td><td>랜덤 문제, 정답/오답 판정</td><td>실력 맞춤 추천, 스트릭</td></tr>
+      <tr><td>에디터</td><td>문제 업로드(배치 + 단일 정해)</td><td>복수 변화도, 힌트/코멘트</td></tr>
+      <tr><td>평가</td><td>좋다 / 나쁘다</td><td>신고, 댓글</td></tr>
+      <tr><td>통계·난이도</td><td>정답률 기반 난이도</td><td>Glicko-2 레이팅, 랭킹</td></tr>
+      <tr><td>계정</td><td>Google 로그인 (필수)</td><td>프로필, 내 문제 모음</td></tr>
+    </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>3. 기술 스택</h2>
+    <div class="tableScroll">
+    <table>
+      <tr><th>영역</th><th>선택</th><th>비고</th></tr>
+      <tr><td>언어</td><td>TypeScript</td><td>React 경험 전이</td></tr>
+      <tr><td>프레임워크</td><td>Expo (React Native)</td><td>기본 템플릿 = Expo Router + TS 탭</td></tr>
+      <tr><td>네비게이션</td><td>Expo Router</td><td>파일 기반</td></tr>
+      <tr><td>서버 상태</td><td>TanStack Query</td><td>캐싱/동기화</td></tr>
+      <tr><td>클라 상태</td><td>Zustand</td><td>가벼운 전역 상태</td></tr>
+      <tr><td>바둑판 렌더링</td><td>react-native-skia</td><td>고성능 Canvas</td></tr>
+      <tr><td>인증</td><td>Firebase Auth (Google)</td><td>로그인 필수</td></tr>
+      <tr><td>DB</td><td>Firestore (NoSQL)</td><td>역정규화 설계</td></tr>
+      <tr><td>서버 로직</td><td>Cloud Functions (TS)</td><td>통계 집계·조작 방지</td></tr>
+      <tr><td>바둑 엔진</td><td><code>@sabaki/go-board</code></td><td>따냄/금수/패 내장 · MIT</td></tr>
+      <tr><td>SGF 파서</td><td><code>@sabaki/sgf</code></td><td>변화도 트리 지원 · MIT</td></tr>
+    </table>
+    </div>
+    <div class="callout ok"><b>리서치 결론:</b> 가장 어려웠던 "바둑 규칙 엔진"은 직접 구현하지 않는다. Sabaki 생태계의 두 MIT 라이브러리(순수 JS, RN 호환)로 대체 → Phase 2 공수 대폭 축소. 우리가 직접 만드는 건 그 위에 올리는 <b>정해 수순 판정기</b> 하나뿐.</div>
+    <div class="callout warn"><b>주의:</b> <code>@sabaki/sgf</code>의 <code>parseFile()</code>은 Node <code>fs</code> 의존 → RN에선 문자열 <code>parse()</code>만 사용. 선택적 의존성(iconv-lite, jschardet)은 설치하지 않는다.</div>
+  </section>
+
+  <section>
+    <h2>4. 데이터 모델 (Firestore)</h2>
+    <div class="callout"><b>RDB → NoSQL 전환 3원칙</b><br>
+      ① JOIN 없음 → 필요한 값은 문서에 중복 저장(역정규화)<br>
+      ② COUNT 비쌈 → attempts/solves는 카운터 필드로 미리 집계<br>
+      ③ 읽은 문서 수만큼 과금 → 목록 읽기 비용 의식</div>
+<pre><code>problems/{problemId}
+  sgf:        "(;GM[1]FF[4]SZ[9];B[ef]...)"   // 문제 + 정해 트리
+  boardSize:  9 | 13
+  toPlay:     "B" | "W"
+  title:      "흑 선, 사는 문제"
+  authorId, authorName        // authorName은 역정규화(복사)
+  createdAt
+  random:     0.48            // 랜덤 출제용
+  // 카운터 (Cloud Functions만 갱신)
+  attempts, solves, upvotes, downvotes
+  solveRate                   // solves/attempts, 난이도 표시
+
+users/{uid}
+  displayName, photoURL, createdAt, solvedCount
+
+users/{uid}/attempts/{problemId}    // 중복 집계 방지
+  result: "solved" | "failed"
+  vote:   "up" | "down" | null
+  attemptedAt</code></pre>
+    <h3>핵심 설계 포인트</h3>
+    <ul>
+      <li><b>랜덤 출제:</b> Firestore엔 <code>ORDER BY RANDOM()</code>이 없음 → 각 문제에 <code>random</code>(0~1) 필드를 두고 <code>where('random','&gt;=', Math.random()) orderBy('random') limit(1)</code>, 없으면 처음으로 wrap.</li>
+      <li><b>통계 조작 방지:</b> attempts/solves/vote는 클라가 직접 못 올림. Callable Function이 <code>users/{uid}/attempts/{problemId}</code> 존재 여부로 첫 시도 확인 후 트랜잭션으로 카운터 갱신.</li>
+      <li><b>보안 규칙(출시 전 필수):</b> problems 읽기=전체 / 생성=로그인(authorId==uid) / 카운터 수정=차단. users=본인만.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>5. 정해 수순 판정기 (코어 로직)</h2>
+    <p>우리가 유일하게 직접 구현하는 핵심. 라이브러리(규칙·파싱) 위에 올라가는 순수 퀴즈 로직.</p>
+    <h3>SGF 문제 저작 규칙</h3>
+    <ol>
+      <li><b>루트</b> = 초기 배치(<code>AB</code>/<code>AW</code>) + 선(<code>PL</code>). 착수 없음.</li>
+      <li>이후 노드는 <b>푸는 사람 색 → 상대 색</b> 번갈아 등장.</li>
+      <li><b>푸는 사람 차례의 children = 인정하는 정답 수들</b> (복수면 복수정답).</li>
+      <li><b>상대 차례의 children = 상대 응수</b> (MVP: 1개만 가정).</li>
+      <li><b>leaf 도달 = 성공.</b> 틀린 수는 트리에 없음 → 자동 오답.</li>
+    </ol>
+<pre><code>(;GM[1]FF[4]SZ[9]
+   AB[cc][dc][ec]     // 흑 초기 배치
+   AW[cd][dd][ed]     // 백 초기 배치
+   PL[B]              // 흑 선 = 푸는 사람
+ ;B[bb]               // 정해 1수
+   ;W[ab]             // 상대 자동 응수
+     ;B[ba]           // 정해 2수 → leaf면 성공
+)</code></pre>
+    <h3>테스트 케이스 (Phase 2 목표)</h3>
+    <div class="tableScroll">
+    <table>
+      <tr><th>#</th><th>시나리오</th><th>기대</th></tr>
+      <tr><td>1</td><td>한 수로 정답 (leaf 직행)</td><td>solved</td></tr>
+      <tr><td>2</td><td>트리에 없는 수</td><td>failed</td></tr>
+      <tr><td>3</td><td>복수 정답 (children 2개)</td><td>둘 다 solved</td></tr>
+      <tr><td>4</td><td>다단계: 정해1→응수→정해2</td><td>단계별 playing→solved</td></tr>
+      <tr><td>5</td><td>상대 자동응수 좌표 반환</td><td>opponentMove 정확</td></tr>
+      <tr><td>6</td><td>따냄 발생 수</td><td>board에서 돌 제거</td></tr>
+      <tr><td>7</td><td>실패 후 추가 입력</td><td>무시(failed 유지)</td></tr>
+      <tr><td>8</td><td>백 선(PL[W])</td><td>solverSign=-1 정상</td></tr>
+    </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>6. 개발 로드맵</h2>
+    <div class="phase"><div class="num">0</div><div class="body"><b>세팅 &amp; 조사</b> <span class="pill easy">쉬움</span><br>Expo 생성, Firebase 연동, SGF 샘플 수집, 엔진 라이브러리 조사 <span class="k">(완료)</span></div></div>
+    <div class="phase"><div class="num">1</div><div class="body"><b>뼈대</b> <span class="pill easy">쉬움</span><br>탭 네비게이션(홈/풀기/올리기/내정보), Google 로그인, 상태 분기</div></div>
+    <div class="phase"><div class="num">2</div><div class="body"><b>정해 판정기 (코어)</b> <span class="pill mid">보통</span><br>UI 없는 순수 TS 모듈 + Jest 테스트. 라이브러리 위 판정 로직 완성</div></div>
+    <div class="phase"><div class="num">3</div><div class="body"><b>바둑판 렌더링</b> <span class="pill mid">보통</span><br>react-native-skia로 판/돌/좌표, 터치→착수, 엔진 연결</div></div>
+    <div class="phase"><div class="num">4</div><div class="body"><b>문제 풀이</b> <span class="pill mid">보통</span><br>Firestore 랜덤 로딩, 정답 피드백, Cloud Functions 집계</div></div>
+    <div class="phase"><div class="num">5</div><div class="body"><b>에디터 &amp; 업로드</b> <span class="pill mid">보통</span><br>초기 배치 + 단일 정해 입력 → SGF 직렬화 → 업로드</div></div>
+    <div class="phase"><div class="num">6</div><div class="body"><b>평가·난이도·내정보</b> <span class="pill easy">쉬움</span><br>좋다/나쁘다, 정답률 난이도 뱃지, 내 문제 목록</div></div>
+    <div class="phase"><div class="num">7</div><div class="body"><b>출시</b> <span class="pill mid">보통</span><br>아이콘/브랜딩, 보안 규칙, 개인정보처리방침, 시드 문제 30~50개, EAS 빌드, 클로즈 테스트</div></div>
+    <div class="callout"><b>공수 주의:</b> 날짜 대신 주 단위 작업량으로 산정. 전체의 큰 비중이 Phase 2~5(코어+UI)에 몰림. 다만 엔진 라이브러리 재사용으로 초기 위험은 크게 감소.</div>
+  </section>
+
+  <section>
+    <h2>7. 결정 사항 로그</h2>
+    <div class="tableScroll">
+    <table>
+      <tr><th>항목</th><th>결정</th><th>이유</th></tr>
+      <tr><td>플랫폼</td><td>Android 우선, iOS 보류</td><td>단일 타겟 집중</td></tr>
+      <tr><td>프론트엔드</td><td>React Native (Expo)</td><td>React 경험 재활용, 빠른 출시</td></tr>
+      <tr><td>백엔드</td><td>Firebase</td><td>서버 운영 없이 MVP 속도</td></tr>
+      <tr><td>판 크기</td><td>9×9, 13×13 (생성 시 선택)</td><td>사활문제 특성</td></tr>
+      <tr><td>로그인</td><td>필수 (Google)</td><td>간편 + 익명 집계 불필요</td></tr>
+      <tr><td>정답 조건</td><td>정해 트리 leaf 도달 = 성공</td><td>구현 단순·명확</td></tr>
+      <tr><td>난이도</td><td>v1: 정답률 / 추후 Glicko-2</td><td>단계적 고도화</td></tr>
+      <tr><td>수익모델</td><td>v1 무료·광고없음</td><td>유저·콘텐츠 확보 우선</td></tr>
+    </table>
+    </div>
+  </section>
+
+  <footer>
+    GoQuiz 기획 문서 · 이 문서는 프로젝트 진행에 따라 갱신됩니다 · <code>C:\WorkSpace\GoQuiz\docs\PLANNING.html</code>
+  </footer>
+
+</div>
+</body>
+</html>
